@@ -67,12 +67,12 @@
                         <Label Content="Respuesta:"/>
                         <DockPanel Height="35" LastChildFill="True">
                             <Button IsDefault="True" DockPanel.Dock="Right" Content="Validar" Width="50" Margin="5" Click="ValidarButton_Click"/>
-                            <TextBox x:Name="respuesta_textbox" Margin="5"></TextBox>
+                            <TextBox Text="{Binding Path=Respuesta.Text}" Margin="5"></TextBox>
 
                         </DockPanel>
-                        <Label x:Name="Error_Label" Margin="5" Content="La respuesta no es correcta" Foreground="Red" Visibility="Collapsed"/>
+                        <Label Margin="5" Content="La respuesta no es correcta" Foreground="Red" Visibility="{Binding Path=Error.Visibility}"/>
 
-                        <Expander x:Name="expander_expander">
+                        <Expander IsExpanded="{Binding Path=Expanded}">
                             <TextBlock TextWrapping="Wrap" FontSize="18" Text="{Binding Path=PreguntaSeleccionada.Pista}">
                             </TextBlock>
                         </Expander>
@@ -84,15 +84,15 @@
                                 <Label Content="Arte" HorizontalContentAlignment="Center"/>
                             </StackPanel>
                             <StackPanel Orientation="Vertical">
-                                <Image x:Name="geografia_image" Source="./assets/geografiaCat.jpg" Style="{StaticResource categorias}"></Image>
+                                <Image Source="{Binding Path=CategoriaGeografia.Source}" Style="{StaticResource categorias}"></Image>
                                 <Label Content="Geografia" HorizontalContentAlignment="Center"/>
                             </StackPanel>
                             <StackPanel Orientation="Vertical" IsEnabled="False">
-                                <Image x:Name="historia_image" Source="./assets/historiaCat.jpg" Style="{StaticResource categorias}"></Image>
+                                <Image Source="{Binding Path=CategoriaHistoria.Source}" Style="{StaticResource categorias}"></Image>
                                 <Label Content="Historia" HorizontalContentAlignment="Center"/>
                             </StackPanel>
                             <StackPanel Orientation="Vertical">
-                                <Image x:Name="musica_image" Source="./assets/musicaCat.jpg" Style="{StaticResource categorias}"></Image>
+                                <Image Source="{Binding Path=CategoriaMusica.Source}" Style="{StaticResource categorias}"></Image>
                                 <Label Content="Musica" HorizontalContentAlignment="Center"/>
                             </StackPanel>
                         </UniformGrid>

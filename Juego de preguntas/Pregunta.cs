@@ -117,7 +117,7 @@ namespace Juego_de_preguntas
             {
                 Random semilla = new Random();
                 int sem = semilla.Next(0, pista.Length - 1);
-                while (pista[sem] == '*')
+                while (pista[sem] == '*' || pista[sem] == ' ')
                 {
                     sem = semilla.Next(0, pista.Length - 1);
                 }

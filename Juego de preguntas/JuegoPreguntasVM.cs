@@ -15,8 +15,38 @@ namespace Juego_de_preguntas
     class JuegoPreguntasVM : INotifyCollectionChanged, INotifyPropertyChanged
     {
         Random semilla = new Random();
+        private bool expanded;
+
+        public bool Expanded
+        {
+            get { return expanded; }
+            set { expanded = value;
+                this.NotifyPropertyChanged("Expanded");
+            }
+        }
+
         int numPregunta = 0;
         Partida partida;
+        
+        private Label error;
+
+        public Label Error
+        {
+            get { return error; }
+            set { error = value;
+                this.NotifyPropertyChanged("Error");
+            }
+        }
+
+        private TextBox respuesta;
+        public TextBox Respuesta
+        {
+            get { return respuesta; }
+            set { respuesta = value;
+                this.NotifyPropertyChanged("Respuesta");
+            }
+        }
+
         private string dificultadElegida;
         private Image categoriaArte;
 
@@ -75,6 +105,9 @@ namespace Juego_de_preguntas
 
         public JuegoPreguntasVM()
         {
+            Respuesta = new TextBox();
+            Error = new Label();
+            Error.Visibility = System.Windows.Visibility.Collapsed;
             CategoriaArte = new Image();
             CategoriaArte.Source = new BitmapImage(new Uri("./assets/arteCat.jpg", UriKind.Relative));
             CategoriaMusica = new Image();
@@ -131,18 +164,32 @@ namespace Juego_de_preguntas
             {
                 case Categoria.Arte:
                     myBitmapImage.UriSource = new Uri("../../assets/arteCat.jpg", UriKind.Relative);
+                    FormatConvertedBitmap n1 = colorGrisCambio(myBitmapImage);
+                    CategoriaArte.Source = n1;
                     break;
                 case Categoria.Musica:
                     myBitmapImage.UriSource = new Uri("../../assets/musicaCat.jpg", UriKind.Relative);
+                    FormatConvertedBitmap n2 = colorGrisCambio(myBitmapImage);
+                    CategoriaMusica.Source = n2;
                     break;
                 case Categoria.Historia:
                     myBitmapImage.UriSource = new Uri("../../assets/historiaCat.jpg", UriKind.Relative);
+                    FormatConvertedBitmap n3 = colorGrisCambio(myBitmapImage);
+                    CategoriaHistoria.Source = n3;
                     break;
                 case Categoria.Geografia:
                     myBitmapImage.UriSource = new Uri("../../assets/geografiaCat.jpg", UriKind.Relative);
+                    FormatConvertedBitmap n4 = colorGrisCambio(myBitmapImage);
+                    CategoriaGeografia.Source = n4;
                     break;
             }
             
+            
+            
+        }
+
+        public FormatConvertedBitmap colorGrisCambio(BitmapImage myBitmapImage)
+        {
             myBitmapImage.DecodePixelWidth = 200;
             myBitmapImage.EndInit();
             FormatConvertedBitmap newFormatedBitmapSource = new FormatConvertedBitmap();
@@ -150,7 +197,7 @@ namespace Juego_de_preguntas
             newFormatedBitmapSource.Source = myBitmapImage;
             newFormatedBitmapSource.DestinationFormat = PixelFormats.Gray32Float;
             newFormatedBitmapSource.EndInit();
-            CategoriaArte.Source = newFormatedBitmapSource;
+            return newFormatedBitmapSource;
         }
         public void siguientePregunta()
         {
@@ -178,12 +225,47 @@ namespace Juego_de_preguntas
         }
         public void categoriaAColor()
         {
+            BitmapImage myBitmapImage = colorCambio("./assets/arteCat.jpg");
+            CategoriaArte.Source = myBitmapImage;
+            myBitmapImage = colorCambio("./assets/geografiaCat.jpg");
+            CategoriaGeografia.Source = myBitmapImage;
+            myBitmapImage = colorCambio("./assets/musicaCat.jpg");
+            CategoriaMusica.Source = myBitmapImage;
+            myBitmapImage = colorCambio("./assets/historiaCat.jpg");
+            CategoriaHistoria.Source = myBitmapImage;
+
+        }
+        public BitmapImage colorCambio(string rutaImagen)
+        {
             BitmapImage myBitmapImage = new BitmapImage();
             myBitmapImage.BeginInit();
-            myBitmapImage.UriSource = new Uri("./assets/arteCat.jpg", UriKind.Relative);
+            myBitmapImage.UriSource = new Uri(rutaImagen, UriKind.Relative);
             myBitmapImage.DecodePixelWidth = 200;
             myBitmapImage.EndInit();
-            CategoriaArte.Source = myBitmapImage;
+            return myBitmapImage;
+        }
+
+        public void vaciarTexto()
+        {
+            Respuesta.Text = String.Empty;
+        }
+
+
+        public void ComprobarRespuesta()
+        {
+            if (Respuesta.Text.ToUpper() == PreguntaSeleccionada.Respuesta)
+            {
+                Error.Visibility = System.Windows.Visibility.Collapsed;
+                CategoriaAGris(PreguntaSeleccionada.Categoria);
+                vaciarTexto();
+                Expanded = false;
+                siguientePregunta();
+            }
+            else
+            {
+                vaciarTexto();
+                Error.Visibility = System.Windows.Visibility.Visible;
+            }
         }
     }
 }

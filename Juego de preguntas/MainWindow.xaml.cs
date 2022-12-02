@@ -30,35 +30,7 @@ namespace Juego_de_preguntas
 
         private void ValidarButton_Click(object sender, RoutedEventArgs e)
         {
-            if (respuesta_textbox.Text.ToUpper() == vm.PreguntaSeleccionada.Respuesta)
-            {
-                Error_Label.Visibility = Visibility.Collapsed;
-                switch (vm.PreguntaSeleccionada.Categoria)
-                {
-                    case Categoria.Arte:
-                        vm.CategoriaAGris(vm.PreguntaSeleccionada.Categoria);
-                        break;
-                    case Categoria.Historia:
-                        
-                        break;
-                    case Categoria.Musica:
-                        
-                        break;
-                    case Categoria.Geografia:
-                        
-                        break;
-                }
-                respuesta_textbox.Text = String.Empty;
-                expander_expander.IsExpanded = false;
-                vm.siguientePregunta();
-            }
-            else
-            {
-                respuesta_textbox.Text = String.Empty;
-                Error_Label.Visibility = Visibility.Visible;
-            }
-
-
+            vm.ComprobarRespuesta();
         }
 
 
