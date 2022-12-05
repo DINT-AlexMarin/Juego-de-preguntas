@@ -40,5 +40,20 @@ namespace Juego_de_preguntas
             vm.categoriaAColor();
             
         }
+
+        private void Examinar_Button(object sender, RoutedEventArgs e)
+        {
+            vm.examinarArchivos();
+        }
+
+        private void AñadirPregunta_Click(object sender, RoutedEventArgs e)
+        {
+            vm.añadirPregunta();
+        }
+
+        private void Limpiar_Click(object sender, RoutedEventArgs e)
+        {
+            vm.LimpiarDatos();
+        }
     }
 }

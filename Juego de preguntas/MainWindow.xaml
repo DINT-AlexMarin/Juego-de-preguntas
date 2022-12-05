@@ -43,10 +43,10 @@
             </Style.Triggers>
         </Style>
     </Window.Resources>
-    <Grid>
+    <Grid Background="AliceBlue">
         <TabControl>
             <TabItem Header="Jugar">
-                <Grid>
+                <Grid Background="LemonChiffon">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"></ColumnDefinition>
                         <ColumnDefinition Width="*"></ColumnDefinition>
@@ -67,7 +67,7 @@
                         <Label Content="Respuesta:"/>
                         <DockPanel Height="35" LastChildFill="True">
                             <Button IsDefault="True" DockPanel.Dock="Right" Content="Validar" Width="50" Margin="5" Click="ValidarButton_Click"/>
-                            <TextBox Text="{Binding Path=Respuesta.Text}" Margin="5"></TextBox>
+                            <TextBox Text="{Binding Path=Respuesta.Text, UpdateSourceTrigger=PropertyChanged}" Margin="5"></TextBox>
 
                         </DockPanel>
                         <Label Margin="5" Content="La respuesta no es correcta" Foreground="Red" Visibility="{Binding Path=Error.Visibility}"/>
@@ -121,30 +121,26 @@
                     <Label Content="Respuesta " Grid.Row="2" Grid.Column="0"></Label>
                     <Label Content="Imágen " Grid.Row="3" Grid.Column="0"></Label>
                     <Label Content="Nivel de dificultad " Grid.Row="4" Grid.Column="0"></Label>
-                    <Image Grid.Row="0" Grid.Column="1"></Image>
-                    <TextBox Grid.Row="1" Grid.Column="1" Margin="5"/>
-                    <TextBox Grid.Row="2" Grid.Column="1" Margin="5"/>
-                    <TextBox Grid.Row="3" Grid.Column="1" Margin="5"/>
+                    <Image Grid.Row="0" Grid.Column="1" Source="{Binding Path=PreguntaAñadir.Imagen}"></Image>
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="5" Text="{Binding Path=PreguntaAñadir.PreguntaTexto}"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Margin="5" Text="{Binding Path=PreguntaAñadir.Respuesta}"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Margin="5" Text="{Binding Path=PreguntaAñadir.Imagen}"/>
                     <DockPanel Grid.Row="4" Grid.Column="1" LastChildFill="True">
-                        <ComboBox Margin="5" DockPanel.Dock="Left">
-                            <ComboBoxItem Content="Facil" IsSelected="True"/>
-                            <ComboBoxItem Content="Medio" />
-                            <ComboBoxItem Content="Dificil" />
+                        <ComboBox Margin="5" DockPanel.Dock="Left" ItemsSource="{Binding Path=Dificultades}" SelectedItem="{Binding Path=PreguntaAñadir.Dificultad}">
                         </ComboBox>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <Label Content="Categoria" Margin="5"/>
-                            <ComboBox Margin="5">
-                                <ComboBoxItem Content="Matemáticas" IsSelected="True"/>
-                                <ComboBoxItem Content="Ciencias"/>
+                            <ComboBox Margin="5" ItemsSource="{Binding Path=ElegirCategorias}" SelectedItem="{Binding Path=PreguntaAñadir.Categoria}">
                             </ComboBox>
                         </StackPanel>
 
                     </DockPanel>
                     <StackPanel Grid.Row="0" Grid.Column="2" Margin="5">
-                        <Button Content="Añadir Pregunta" Margin="5"/>
-                        <Button Content="Limpiar Formulario" Margin="5"/>
+                        <Button Content="Añadir Pregunta" Margin="5" Click="AñadirPregunta_Click"/>
+                        <Button Content="Limpiar Formulario" Margin="5" Click="Limpiar_Click"/>
+                        <Label Content="No se ha introducido correctamente todos los datos" Foreground="Red" Visibility="{Binding Path=ErrorAñadirPregunta.Visibility}"/>
                     </StackPanel>
-                    <Button Grid.Column="2" Grid.Row="3" Margin="5" Content="Examinar"/>
+                    <Button Grid.Column="2" Grid.Row="3" Margin="5" Content="Examinar" Click="Examinar_Button"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Gestionar Pregunta">

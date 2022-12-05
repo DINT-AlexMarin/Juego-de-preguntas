@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -16,24 +17,64 @@ namespace Juego_de_preguntas
     {
         Random semilla = new Random();
         private bool expanded;
-
         public bool Expanded
         {
             get { return expanded; }
-            set { expanded = value;
+            set
+            {
+                expanded = value;
                 this.NotifyPropertyChanged("Expanded");
             }
         }
+        ObservableCollection<int> numPreguntasRealizadas = new ObservableCollection<int>();
 
-        int numPregunta = 0;
-        Partida partida;
-        
+        private ObservableCollection<string> elegirCategorias;
+
+        public ObservableCollection<string> ElegirCategorias
+        {
+            get { return elegirCategorias; }
+            set
+            {
+                elegirCategorias = value;
+                NotifyPropertyChanged("ElegirCategorias");
+            }
+        }
+
+        private string categoriaElegida;
+
+        public string CategoriaElegida
+        {
+            get { return categoriaElegida; }
+            set
+            {
+                categoriaElegida = value;
+                NotifyPropertyChanged("CategoriaElegida");
+            }
+        }
+
+
+
+        int numPregunta;
+        private Partida partidaActual;
+
+        public Partida PartidaActual
+        {
+            get { return partidaActual; }
+            set { partidaActual = value;
+                NotifyPropertyChanged("PartidaActual");
+            }
+        }
+        ;
+
+
         private Label error;
 
         public Label Error
         {
             get { return error; }
-            set { error = value;
+            set
+            {
+                error = value;
                 this.NotifyPropertyChanged("Error");
             }
         }
@@ -42,7 +83,9 @@ namespace Juego_de_preguntas
         public TextBox Respuesta
         {
             get { return respuesta; }
-            set { respuesta = value;
+            set
+            {
+                respuesta = value;
                 this.NotifyPropertyChanged("Respuesta");
             }
         }
@@ -53,7 +96,9 @@ namespace Juego_de_preguntas
         public Image CategoriaArte
         {
             get { return categoriaArte; }
-            set { categoriaArte = value;
+            set
+            {
+                categoriaArte = value;
                 this.NotifyPropertyChanged("CategoriaArte");
             }
         }
@@ -105,8 +150,11 @@ namespace Juego_de_preguntas
 
         public JuegoPreguntasVM()
         {
+            PreguntaAñadir = new Pregunta();
             Respuesta = new TextBox();
             Error = new Label();
+            ErrorAñadirPregunta = new Label();
+            ErrorAñadirPregunta.Visibility = Visibility.Collapsed;
             Error.Visibility = System.Windows.Visibility.Collapsed;
             CategoriaArte = new Image();
             CategoriaArte.Source = new BitmapImage(new Uri("./assets/arteCat.jpg", UriKind.Relative));
@@ -116,14 +164,18 @@ namespace Juego_de_preguntas
             CategoriaGeografia.Source = new BitmapImage(new Uri("./assets/geografiaCat.jpg", UriKind.Relative));
             CategoriaHistoria = new Image();
             CategoriaHistoria.Source = new BitmapImage(new Uri("./assets/historiaCat.jpg", UriKind.Relative));
-            DificultadElegida = "Facil";
             Dificultades = new ObservableCollection<string>();
+            ElegirCategorias = new ObservableCollection<string>();
             Dificultad dificultad = Dificultad.Facil;
             partida = new Partida(dificultad);
-            PreguntaSeleccionada = partida.PreguntasPartida[numPregunta];
+            siguientePregunta();
             Dificultades.Add("Facil");
             Dificultades.Add("Medio");
             Dificultades.Add("Dificil");
+            ElegirCategorias.Add("Geografia");
+            ElegirCategorias.Add("Historia");
+            ElegirCategorias.Add("Musica");
+            ElegirCategorias.Add("Arte");
 
 
         }
@@ -160,7 +212,7 @@ namespace Juego_de_preguntas
         {
             BitmapImage myBitmapImage = new BitmapImage();
             myBitmapImage.BeginInit();
-            switch(categoria)
+            switch (categoria)
             {
                 case Categoria.Arte:
                     myBitmapImage.UriSource = new Uri("../../assets/arteCat.jpg", UriKind.Relative);
@@ -183,9 +235,9 @@ namespace Juego_de_preguntas
                     CategoriaGeografia.Source = n4;
                     break;
             }
-            
-            
-            
+
+
+
         }
 
         public FormatConvertedBitmap colorGrisCambio(BitmapImage myBitmapImage)
@@ -201,17 +253,63 @@ namespace Juego_de_preguntas
         }
         public void siguientePregunta()
         {
-            if (numPregunta < partida.PreguntasPartida.Count - 1)
+            int value = semilla.Next(0, 4);
+            while (numPreguntasRealizadas.Contains(value) && numPreguntasRealizadas.Count < 4)
             {
-                numPregunta++;
+                value = semilla.Next(0, 4);
+            }
+            if (numPreguntasRealizadas.Count >= 4)
+            {
+                MessageBox.Show("Has ganado", "GANADOR");
+            }
+            else
+            {
+                numPregunta = value;
+                numPreguntasRealizadas.Add(value);
                 PreguntaSeleccionada = partida.PreguntasPartida[numPregunta];
             }
 
+
+        }
+        private Label errorAñadirPregunta;
+
+        public Label ErrorAñadirPregunta
+        {
+            get { return errorAñadirPregunta; }
+            set
+            {
+                errorAñadirPregunta = value;
+                NotifyPropertyChanged("ErrorAñadirPregunta");
+            }
         }
 
-        public void añadirPregunta(Pregunta pregunta)
+
+        public void examinarArchivos()
         {
-            partida.Preguntas.Add(pregunta);
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            Nullable<bool> result = dlg.ShowDialog();
+            if (result == true)
+            {
+                // Open document
+                string filename = dlg.FileName;
+                PreguntaAñadir.Imagen = filename;
+            }
+        }
+
+        public void añadirPregunta()
+        {
+
+            if (PreguntaAñadir.PreguntaTexto == null || PreguntaAñadir.Respuesta == null || preguntaAñadir.Imagen == null)
+            {
+                ErrorAñadirPregunta.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Partida.Preguntas.Add(PreguntaAñadir);
+                ErrorAñadirPregunta.Visibility = Visibility.Collapsed;
+                MessageBox.Show("Pregunta añadida correctamente");
+            }
+
         }
 
         public void nuevaPartida()
@@ -220,8 +318,30 @@ namespace Juego_de_preguntas
             {
                 partida = new Partida(dif);
             }
-            numPregunta = 0;
+            numPreguntasRealizadas.Clear();
+            siguientePregunta();
             PreguntaSeleccionada = partida.PreguntasPartida[numPregunta];
+        }
+
+
+        private Pregunta preguntaAñadir;
+
+        public Pregunta PreguntaAñadir
+        {
+            get { return preguntaAñadir; }
+            set
+            {
+                preguntaAñadir = value;
+                NotifyPropertyChanged("PreguntaAñadir");
+            }
+        }
+
+
+        public void LimpiarDatos()
+        {
+            PreguntaAñadir.Imagen = null;
+            PreguntaAñadir.PreguntaTexto = null;
+            PreguntaAñadir.Respuesta = null;
         }
         public void categoriaAColor()
         {
